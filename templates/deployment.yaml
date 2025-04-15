@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "cypress-nginx-chart.fullname" . }}
+  labels:
+    {{- include "cypress-nginx-chart.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "cypress-nginx-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "cypress-nginx-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: {{ .Values.volume.name }}
+          emptyDir: {}
+        - name: config-volume
+          configMap:
+            name: {{ include "cypress-nginx-chart.fullname" . }}-config
+      containers:
+        - name: cypress
+          image: "{{ .Values.cypress.image.repository }}:{{ .Values.cypress.image.tag }}"
+          imagePullPolicy: {{ .Values.cypress.image.pullPolicy }}
+          volumeMounts:
+            - name: {{ .Values.volume.name }}
+              mountPath: /test-artifacts
+            - name: config-volume
+              mountPath: /cypress/cypress.json
+              subPath: cypress.json
+          command: ["/bin/bash"]
+          args:
+            - "-c"
+            - |
+              mkdir -p /test-artifacts/reports
+              mkdir -p /test-artifacts/videos
+              mkdir -p /test-artifacts/screenshots
+              cypress run
+              echo "Tests completed, container will stay alive to serve results"
+              tail -f /dev/null
+          resources:
+            {{- toYaml .Values.cypress.resources | nindent 12 }}
+              
+        - name: nginx
+          image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
+          imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - name: {{ .Values.volume.name }}
+              mountPath: /usr/share/nginx/html/reports
+              subPath: reports
+            - name: {{ .Values.volume.name }}
+              mountPath: /usr/share/nginx/html/videos
+              subPath: videos
+            - name: {{ .Values.volume.name }}
+              mountPath: /usr/share/nginx/html/screenshots
+              subPath: screenshots
+            - name: config-volume
+              mountPath: /usr/share/nginx/html/index.html
+              subPath: index.html
+          resources:
+            {{- toYaml .Values.nginx.resources | nindent 12 }}
+

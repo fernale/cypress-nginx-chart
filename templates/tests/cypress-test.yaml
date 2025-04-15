@@ -1,0 +1,42 @@
+{{- if .Values.cypress.enabled }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "cypress-nginx-chart.fullname" . }}-cypress-test"
+  labels:
+    {{- include "cypress-nginx-chart.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: cypress
+      image: "{{ .Values.cypress.image.repository }}:{{ .Values.cypress.image.tag }}"
+      imagePullPolicy: {{ .Values.cypress.image.pullPolicy }}
+      volumeMounts:
+        - name: tests-volume
+          mountPath: /cypress/cypress
+        - name: {{ .Values.volume.name }}
+          mountPath: /test-artifacts
+      env:
+        - name: CYPRESS_baseUrl
+          value: "http://{{ include "cypress-nginx-chart.fullname" . }}:{{ .Values.nginx.service.port }}"
+      command: ["/bin/bash", "-c"]
+      args:
+        - |
+          cd /cypress
+          cypress run
+          exit_code=$?
+          cp -r /cypress/cypress/screenshots /test-artifacts/ || true
+          cp -r /cypress/cypress/videos /test-artifacts/ || true
+          mkdir -p /test-artifacts/reports
+          cp -r /cypress/cypress/reports/* /test-artifacts/reports/ || true
+          exit $exit_code
+  volumes:
+    - name: tests-volume
+      configMap:
+        name: {{ include "cypress-nginx-chart.fullname" . }}-cypress-tests
+    - name: {{ .Values.volume.name }}
+      emptyDir: {}
+  restartPolicy: Never
+{{- end }}
+
