@@ -44,3 +44,25 @@ volume:
 argocd:
   enabled: true
 
+# ServiceAccount configuration (required for your templates)
+serviceAccount:
+  create: true
+  name: ""
+  automount: true
+  annotations: {}
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts: []
+  tls: []
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: null
+service:
+  type: ClusterIP
+  port: 80
+
