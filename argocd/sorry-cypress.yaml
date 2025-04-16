@@ -11,6 +11,8 @@ spec:
     targetRevision: 1.20.0
     helm:
       values: |
+        mongodb:
+          mongoConnectionString: "mongodb://cypress-cicd-mongodb-0.cypress-cicd-mongodb-headless.default.svc.cluster.local:27017,cypress-cicd-mongodb-1.cypress-cicd-mongodb-headless.default.svc.cluster.local:27017/sorry-cypress?replicaSet=rs0"
         director:
           url: http://sorry-cypress-director.default.svc.cluster.local
           
