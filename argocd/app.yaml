@@ -1,8 +1,10 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cypress
+  name: cypress-e2e
   namespace: argocd
+  labels:
+    app.kubernetes.io/instance: cypress-e2e
 spec:
   project: default
   source:
