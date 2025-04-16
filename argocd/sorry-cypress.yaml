@@ -1,0 +1,53 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sorry-cypress
+  namespace: argocd
+spec:
+  project: default
+  source:
+    chart: sorry-cypress
+    repoURL: https://sorry-cypress.github.io/charts
+    targetRevision: latest
+    helm:
+      values: |
+        director:
+          url: http://sorry-cypress-director.default.svc.cluster.local
+          
+        dashboard:
+          environmentVariables:
+            CYPRESS_DIRECTOR_URL: http://sorry-cypress-director.default.svc.cluster.local
+          ingress:
+            enabled: true
+            hosts:
+              - host: sorry-cypress.localhost
+                paths:
+                  - path: /
+                    pathType: Prefix
+                    
+        api:
+          ingress:
+            enabled: true
+            hosts:
+              - host: sorry-cypress-api.localhost
+                paths:
+                  - path: /
+                    pathType: Prefix
+                    
+        director:
+          ingress:
+            enabled: true
+            hosts:
+              - host: sorry-cypress-director.localhost
+                paths:
+                  - path: /
+                    pathType: Prefix
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
