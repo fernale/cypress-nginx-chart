@@ -6,8 +6,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/sorry-cypress/charts  # Official Helm chart
-    targetRevision: main
+    repoURL: https://sorry-cypress.dev/helm-charts/  # Official Helm chart
+    targetRevision: 1.20.0
     chart: sorry-cypress
     helm:
       valueFiles:
