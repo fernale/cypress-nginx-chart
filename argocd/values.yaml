@@ -1,0 +1,26 @@
+dashboard:
+  enabled: true
+  ingress:
+    enabled: true
+    hosts:
+      - host: cypress-dashboard.e2e.local
+        path: /
+    annotations:
+      kubernetes.io/ingress.class: nginx
+global:
+  labels:
+    app.kubernetes.io/instance: cypress-e2e
+    argocd.argoproj.io/instance: cypress-e2e
+api:
+  env:
+    MONGODB_URI: "mongodb://cypress-e2e-mongodb-headless.default.svc.cluster.local:27017/sorrycypress?replicaSet=rs0"
+
+mongodb:  # Correct key name
+  internal_db:
+    enabled: true
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: standard
+    accessModes:
+      - ReadWriteOnce
