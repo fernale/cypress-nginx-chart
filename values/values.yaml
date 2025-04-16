@@ -3,16 +3,16 @@ dashboard:
   ingress:
     enabled: true
     hosts:
-      - host: cypress-dashboard.e2e.local  # Replace with your domain
+      - host: cypress-dashboard.e2e.local
         path: /
     annotations:
       kubernetes.io/ingress.class: nginx
 
 api:
   env:
-    MONGODB_URI: "mongodb://cypress-mongodb.default.svc.cluster.local:27017/sorrycypress?replicaSet=rs0"
+    MONGODB_URI: "mongodb://cypress-mongodb-headless.default.svc.cluster.local:27017/sorrycypress?replicaSet=rs0"
 
-mongo:
+mongodb:  # Correct key name
   internal_db:
     enabled: true
   persistence:
