@@ -1,4 +1,0 @@
-# Enables the runCleaner cronjob
-
-runCleaner:
-  enabled: true

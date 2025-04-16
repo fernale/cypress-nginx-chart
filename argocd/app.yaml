@@ -1,16 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cypress-dashboard
+  name: sorry-cypress
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://github.com/fernale/cypress-nginx-chart.git
-    targetRevision: HEAD
-    path: k8s
-    kustomize:
-      version: v5.0.0  # TODO
+    repoURL: https://github.com/sorry-cypress/charts  # Official Helm chart
+    targetRevision: main
+    chart: sorry-cypress
+    helm:
+      valueFiles:
+        - ../../values/values.yaml  # Path to your custom values
   destination:
     server: https://kubernetes.default.svc
     namespace: default
@@ -18,4 +19,3 @@ spec:
     automated:
       prune: true
       selfHeal: true
-

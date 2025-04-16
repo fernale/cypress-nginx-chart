@@ -1,0 +1,26 @@
+dashboard:
+  enabled: true
+  ingress:
+    enabled: true
+    hosts:
+      - host: cypress-dashboard.example.com  # Your domain
+        paths:
+          - path: /
+    annotations:
+      kubernetes.io/ingress.class: nginx
+
+mongo:
+  internal_db:
+    enabled: true
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: standard
+
+api:
+  env:
+    MONGODB_URI: "mongodb://cypress-mongo.default.svc.cluster.local:27017/sorrycypress?replicaSet=rs0"
+
+director:
+  env:
+    EXECUTION_DRIVER: "../execution/mongo/driver"
