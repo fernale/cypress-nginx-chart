@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: cypress-cicd
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
@@ -13,12 +15,24 @@ spec:
       values: |
         mongodb:
           mongoConnectionString: "mongodb://cypress-cicd-mongodb-0.cypress-cicd-mongodb-headless.default.svc.cluster.local:27017,cypress-cicd-mongodb-1.cypress-cicd-mongodb-headless.default.svc.cluster.local:27017/sorry-cypress?replicaSet=rs0"
+        
+        # Director configuration - consolidated in one place
         director:
-          url: http://sorry-cypress-director.default.svc.cluster.local
-          
+          url: http://sorry-cypress-director.localhost  # External URL for clients
+          dashboardUrl: http://sorry-cypress.localhost  # External dashboard URL
+          environmentVariables:
+            DASHBOARD_URL: http://sorry-cypress.localhost
+          ingress:
+            enabled: true
+            hosts:
+              - host: sorry-cypress-director.localhost
+                paths:
+                  - path: /
+                    pathType: Prefix
+                    
         dashboard:
           environmentVariables:
-            CYPRESS_DIRECTOR_URL: http://sorry-cypress-director.default.svc.cluster.local
+            CYPRESS_DIRECTOR_URL: http://sorry-cypress-director.localhost  # Updated to external URL
           ingress:
             enabled: true
             hosts:
@@ -32,15 +46,6 @@ spec:
             enabled: true
             hosts:
               - host: sorry-cypress-api.localhost
-                paths:
-                  - path: /
-                    pathType: Prefix
-                    
-        director:
-          ingress:
-            enabled: true
-            hosts:
-              - host: sorry-cypress-director.localhost
                 paths:
                   - path: /
                     pathType: Prefix
