@@ -1,11 +1,10 @@
-resources:
-  - manifests/cypress-results-pvc.yaml
-  - manifests/cleanup-cronjob.yaml
+helmGlobals:
+  chartHome: charts  # Location of local charts
 
 helmCharts:
-  - name: sorry-cypress
-    path: charts/sorry-cypress
-    valuesFile: ../values/values.yaml
+  - name: sorry-cypress  # Chart name (matches directory name)
+    version: "1.20.0"     # Must match Chart.yaml version
     releaseName: cypress
     namespace: default
+    valuesFile: values.yaml
 

@@ -6,8 +6,8 @@ dashboard:
     enabled: true
     ingressClassName: nginx  # Or your ingress controller's class name
     hosts:
-      host: e2e.cypress.local  # Replace with your desired domain
-      path: /
+      - host: cypress-dashboard.e2e.local  # Replace with your desired domain
+        path: /
     tls: []  # Add TLS config if needed
     annotations: 
       kubernetes.io/ingress.class: nginx
