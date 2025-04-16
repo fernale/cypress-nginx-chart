@@ -1,0 +1,33 @@
+dashboard:
+  enabled: true
+  service:
+    port: 4000  # Default port for Sorry Cypress Dashboard
+  ingress:
+    enabled: true
+    ingressClassName: nginx  # Or your ingress controller's class name
+    hosts:
+      host: e2e.cypress.local  # Replace with your desired domain
+      path: /
+    tls: []  # Add TLS config if needed
+    annotations: 
+      kubernetes.io/ingress.class: nginx
+      # Add other annotations as needed (e.g., for cert-manager)
+mongo:
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: standard
+    accessModes:
+      - ReadWriteOnce
+    # Retention policy is managed by PVC lifecycle, see below
+
+results:
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: standard
+    accessModes:
+      - ReadWriteOnce
+
+# Optional: Set resource limits, node selectors, etc.
+

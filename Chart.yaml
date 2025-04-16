@@ -1,6 +1,0 @@
-apiVersion: v2
-name: cypress-nginx-chart
-description: A Helm chart for running Cypress tests with NGINX dashboard
-version: 0.1.0
-appVersion: "1.0.0"
-

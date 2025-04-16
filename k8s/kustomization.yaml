@@ -1,0 +1,11 @@
+resources:
+  - manifests/cypress-results-pvc.yaml
+  - manifests/cleanup-cronjob.yaml
+
+helmCharts:
+  - name: sorry-cypress
+    path: charts/sorry-cypress
+    valuesFile: ../values/values.yaml
+    releaseName: cypress
+    namespace: default
+
